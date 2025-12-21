@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>レシピ一覧</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+<h1>レシピ一覧</h1>
+
+<a href="{{ url_for('add_recipe') }}">➕ 新規レシピ追加</a>
+｜
+<a href="{{ url_for('categories') }}">📂 分類管理</a>
+｜
+{% if show_fav %}
+    <a href="{{ url_for('index') }}">← 全件表示</a>
+｜
+{% else %}
+    <a href="{{ url_for('index', fav=1) }}">⭐ お気に入りのみ</a>
+{% endif %}
+
+<hr>
+
+<form method="get" action="{{ url_for('index') }}">
+    材料：
+    <input type="text" name="ingredient" value="{{ request.args.get('ingredient','') }}">
+
+    分類：
+    <select name="category_id">
+        <option value="">すべて</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}"
+              {% if request.args.get('category_id') == c.id|string %}selected{% endif %}>
+              {{ c.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">検索</button>
+</form>
+
+<hr>
+
+<div class="grid">
+
+
+{% for recipe in recipes %}
+    <div class="card">
+        <a href="{{ url_for('recipe_detail', recipe_id=recipe['id']) }}">
+            {% if recipe['image'] %}
+                <img src="{{ url_for('static', filename='images/' + recipe['image']) }}">
+            {% else %}
+                <div style="height:120px;line-height:120px;background:#eee;">
+                    画像なし
+                </div>
+            {% endif %}
+<div>
+    <strong>{{ recipe['name'] }}</strong><br>
+    <small>{{ recipe['category'] or '未分類' }}</small><br>
+
+    <a href="{{ url_for('toggle_favorite', recipe_id=recipe['id']) }}">
+        {% if recipe['favorite'] %}
+            ⭐ お気に入り
+        {% else %}
+            ☆ お気に入り
+        {% endif %}
+    </a>
+</div>
+
+        </a>
+    </div>
+{% endfor %}
+</div>
+
+</body>
+</html>

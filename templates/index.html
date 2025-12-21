@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}レシピ一覧{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+    <h4>レシピ一覧</h4>
+    <a href="{{ url_for('add_recipe') }}" class="btn btn-primary btn-sm">
+        ＋ 新規レシピ
+    </a>
+    <hr>
+    <a href="{{ url_for('categories') }}" class="btn btn-primary btn-sm">
+        📂 分類管理
+    </a>
+    <hr>
+    {% if show_fav %}
+        <a href="{{ url_for('index') }}" class="btn btn-primary btn-sm">
+            ← 全件表示
+        </a>
+        <hr>
+    {% else %}
+        <a href="{{ url_for('index', fav=1) }}" class="btn btn-primary btn-sm">
+            ⭐ お気に入りのみ
+        </a>
+        <hr>
+    {% endif %}
+</div>
+
+<form method="get" action="{{ url_for('index') }}">
+    材料：
+    <input type="text" name="ingredient" value="{{ request.args.get('ingredient','') }}">
+
+    分類：
+    <select name="category_id">
+        <option value="">すべて</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}"
+              {% if request.args.get('category_id') == c.id|string %}selected{% endif %}>
+              {{ c.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">検索</button>
+</form>
+
+<hr>
+
+<div class="row">
+{% for recipe in recipes %}
+  <div class="col-6 col-md-4 col-lg-3 mb-3">
+    <div class="card h-100">
+      {% if recipe.image %}
+        <img src="{{ url_for('static', filename='images/' + recipe.image) }}"
+             class="card-img-top img-fluid">
+      {% endif %}
+
+      <div class="card-body">
+        <h6 class="card-title">{{ recipe.name }}</h6>
+        <small>{{ recipe['category'] or '未分類' }}</small>
+        <a href="{{ url_for('toggle_favorite', recipe_id=recipe['id']) }}">
+            {% if recipe['favorite'] %}
+                ⭐ お気に入り
+            {% else %}
+                ☆ お気に入り
+            {% endif %}
+        </a>
+        <a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}"
+           class="btn btn-outline-primary btn-sm w-100">
+           詳細
+        </a>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+{% endblock %}

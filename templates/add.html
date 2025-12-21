@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>レシピ追加</title>
+</head>
+<body>
+
+<a href="{{ url_for('index') }}">← 一覧へ戻る</a>
+
+<h1>➕ レシピ追加</h1>
+
+<form method="post" enctype="multipart/form-data">
+
+    <div>
+        レシピ名：<br>
+        <input type="text" name="name">
+    </div>
+
+    <div>
+        画像：<br>
+        <input type="file" name="image" accept="image/*">
+        <br>
+        <button type="button" onclick="runOCR()">📸 写真から文字入力</button>
+    </div>
+
+    <div>
+        材料：<br>
+        <textarea name="ingredients" rows="6" cols="40"></textarea>
+    </div>
+
+    <div>
+        手順：<br>
+        <textarea name="steps" rows="6" cols="40"></textarea>
+    </div>
+
+    <button type="submit">保存</button>
+</form>
+
+<script>
+function runOCR() {
+    const imageInput = document.querySelector('input[name="image"]');
+
+    if (!imageInput || !imageInput.files.length) {
+        alert("画像を選択してください");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", imageInput.files[0]);
+
+    fetch("/ocr", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.text())
+    .then(text => {
+        document.querySelector('textarea[name="ingredients"]').value = text;
+    });
+}
+</script>
+
+
+    <p>
+        材料<br>
+        <textarea name="ingredients" rows="5" cols="40"></textarea>
+    </p>
+
+    <p>
+        手順<br>
+        <textarea name="steps" rows="5" cols="40"></textarea>
+    </p>
+
+    <p>
+        メモ<br>
+        <textarea name="memo" rows="3" cols="40"></textarea>
+    </p>
+
+    <button type="submit">登録</button>
+
+    <p>
+        分類<br>
+        <select name="category_id">
+            <option value="">未分類</option>
+            {% for c in categories %}
+                <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+</form>
+
+</body>
+</html>

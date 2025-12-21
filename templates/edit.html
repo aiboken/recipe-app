@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>レシピ編集</title>
+</head>
+<body>
+
+<h1>レシピ編集</h1>
+
+<form method="post" enctype="multipart/form-data">
+
+    レシピ名：<br>
+    <input type="text" name="name" value="{{ recipe['name'] }}"><br><br>
+
+    画像（変更する場合のみ選択）：<br>
+    <input type="file" name="image"><br><br>
+
+    材料：<br>
+    <textarea name="ingredients" rows="6" cols="40">{{ recipe['ingredients'] }}</textarea><br><br>
+
+    手順：<br>
+    <textarea name="steps" rows="6" cols="40">{{ recipe['steps'] }}</textarea><br><br>
+
+    メモ：<br>
+    <textarea name="memo" rows="4" cols="40">{{ recipe['memo'] }}</textarea><br><br>
+
+    分類：<br>
+    <select name="category_id">
+        <option value="">未分類</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}"
+              {% if recipe['category_id'] == c.id %}selected{% endif %}>
+              {{ c.name }}
+            </option>
+        {% endfor %}
+    </select><br><br>
+
+    <button type="submit">保存</button>
+    <a href="{{ url_for('recipe_detail', recipe_id=recipe['id']) }}">キャンセル</a>
+</form>
+
+</body>
+</html>

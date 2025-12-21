@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ recipe.name }}</title>
+</head>
+<body>
+
+<a href="{{ url_for('index') }}">← 一覧へ戻る</a>
+
+<h1>{{ recipe.name }}</h1>
+
+<img src="{{ url_for('static', filename='images/' + recipe.image) }}"
+     style="width:300px;">
+
+<h2>材料</h2>
+<pre>{{ recipe.ingredients }}</pre>
+
+<h2>手順</h2>
+<pre>{{ recipe.steps }}</pre>
+
+{% if recipe.memo %}
+<h2>メモ</h2>
+<p>{{ recipe.memo }}</p>
+{% endif %}
+
+{% if recipe.category_id %}
+<p>分類あり</p>
+{% endif %}
+
+<hr>
+
+<a href="{{ url_for('edit_recipe', recipe_id=recipe['id']) }}">
+    ✏️ 編集
+</a>
+
+<form method="post"
+      action="{{ url_for('delete_recipe', recipe_id=recipe['id']) }}"
+      style="display:inline;"
+      onsubmit="return confirm('本当に削除しますか？');">
+    <button type="submit">🗑 削除</button>
+</form>
+
+<a href="{{ url_for('index') }}">← 一覧へ戻る</a>
+
+</body>
+</html>

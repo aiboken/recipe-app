@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>分類管理</title>
+</head>
+<body>
+
+<a href="{{ url_for('index') }}">← 一覧へ戻る</a>
+
+<h1>📂 分類管理</h1>
+
+<form method="post">
+    <input type="text" name="name" placeholder="分類名（例：和食）" required>
+    <button type="submit">追加</button>
+</form>
+
+<ul>
+{% for c in categories %}
+    <li>{{ c.name }}</li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
