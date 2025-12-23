@@ -3,11 +3,25 @@ from PIL import Image
 import sqlite3
 import os
 import pytesseract
+import sqlite3
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "static/images"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+def init_db():
+    conn = sqlite3.connect("recipe.db")
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS categories (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+init_db()
 
 def get_db_connection():
     conn = sqlite3.connect("recipes.db")
