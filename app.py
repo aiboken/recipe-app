@@ -11,16 +11,31 @@ UPLOAD_FOLDER = "static/images"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 def init_db():
-    conn = sqlite3.connect("recipe.db")
+    conn = sqlite3.connect("recipes.db")
+
     conn.execute("""
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE
         )
     """)
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS recipes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            image TEXT,
+            ingredients TEXT,
+            steps TEXT,
+            memo TEXT,
+            category_id INTEGER,
+            favorite INTEGER DEFAULT 0,
+            FOREIGN KEY (category_id) REFERENCES categories(id)
+        )
+    """)
+
     conn.commit()
     conn.close()
-
 init_db()
 
 def get_db_connection():
